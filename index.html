@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Koji si tip developera? — Venio Indicium</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f4f6f9;
+  --surface: #ffffff;
+  --surface2: #eef1f6;
+  --border: rgba(0,0,0,0.07);
+  --border-hover: rgba(0,150,136,0.35);
+  --text: #0f1923;
+  --muted: rgba(15,25,35,0.45);
+  --accent: #009688;
+  --accent-light: rgba(0,150,136,0.1);
+  --accent-glow: rgba(0,150,136,0.2);
+  --accent2: #00bcd4;
+  --accent-dark: #00695c;
+  --shadow: 0 2px 16px rgba(0,150,136,0.08);
+  --shadow-lg: 0 8px 40px rgba(0,150,136,0.15);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-x: hidden;
+}
+
+/* subtle dot pattern bg */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(0,150,136,0.08) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  top: -20%;
+  right: -10%;
+  width: 55%;
+  height: 55%;
+  background: radial-gradient(ellipse, rgba(0,188,212,0.07) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+  animation: drift 14s ease-in-out infinite alternate;
+}
+
+@keyframes drift {
+  from { transform: translate(0,0) scale(1); }
+  to { transform: translate(-4%, 6%) scale(1.08); }
+}
+
+.wrap {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 660px;
+  padding: 2rem 1.5rem;
+}
+
+.screen { display: none; }
+.screen.active { display: block; animation: fadeUp 0.4s ease both; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* HEADER / BRAND */
+.brand-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 3rem;
+}
+.brand-logo {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 2px 12px rgba(0,150,136,0.15);
+  border: 2px solid rgba(0,150,136,0.15);
+}
+.brand-text { display: flex; flex-direction: column; }
+.brand-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 0.02em;
+}
+.brand-event {
+  font-size: 11px;
+  color: var(--accent);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* INTRO */
+.intro-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1.25rem;
+  padding: 6px 14px;
+  background: var(--accent-light);
+  border-radius: 99px;
+  border: 1px solid rgba(0,150,136,0.2);
+}
+.intro-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(2.6rem, 7vw, 4rem);
+  font-weight: 800;
+  line-height: 1.03;
+  margin-bottom: 1.5rem;
+  color: var(--text);
+}
+.intro-title span { color: var(--accent); }
+.intro-desc {
+  font-size: 16px;
+  color: var(--muted);
+  line-height: 1.75;
+  margin-bottom: 2.5rem;
+  max-width: 460px;
+  font-weight: 300;
+}
+.chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 2.5rem; }
+.chip {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: 99px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+/* BUTTONS */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 32px;
+  border-radius: 12px;
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+.btn-accent {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+  color: #fff;
+  box-shadow: 0 4px 20px var(--accent-glow);
+}
+.btn-accent:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,150,136,0.3); }
+.btn-accent:active { transform: translateY(0); }
+.btn-accent:disabled { opacity: 0.3; cursor: not-allowed; transform: none; box-shadow: none; }
+.btn-ghost {
+  background: var(--surface);
+  color: var(--muted);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+.btn-ghost:hover { border-color: var(--border-hover); color: var(--accent); }
+.arrow { display: inline-block; transition: transform 0.2s; }
+.btn:hover .arrow { transform: translateX(4px); }
+
+/* QUIZ */
+.progress-wrap { margin-bottom: 2rem; }
+.progress-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.progress-label {
+  font-size: 11px; font-weight: 600; color: var(--muted);
+  font-family: 'Syne', sans-serif; letter-spacing: 0.1em; text-transform: uppercase;
+}
+.progress-count { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: var(--accent); }
+.progress-track { height: 4px; background: var(--surface2); border-radius: 99px; overflow: hidden; }
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  border-radius: 99px;
+  transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+}
+
+.q-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+}
+.q-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+}
+.q-num {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 1rem;
+}
+.q-text { font-size: 18px; font-weight: 400; line-height: 1.6; color: var(--text); }
+
+.scale-section { margin-bottom: 2rem; }
+.scale-labels {
+  display: flex; justify-content: space-between;
+  font-size: 11px; color: var(--muted);
+  font-weight: 500; margin-bottom: 14px; letter-spacing: 0.02em;
+}
+.scale-btns { display: flex; gap: 10px; justify-content: center; }
+.scale-btn {
+  flex: 1; max-width: 100px;
+  aspect-ratio: 1;
+  border-radius: 14px;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  font-family: 'Syne', sans-serif;
+  font-size: 18px; font-weight: 700;
+  cursor: pointer;
+  transition: all 0.18s;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 5px;
+  box-shadow: var(--shadow);
+}
+.scale-btn .dot-row { display: flex; gap: 3px; }
+.scale-btn .dot { width: 4px; height: 4px; border-radius: 50%; background: currentColor; opacity: 0.3; }
+.scale-btn .dot.on { opacity: 1; }
+.scale-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-light);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px var(--accent-glow);
+}
+.scale-btn.selected {
+  border-color: var(--accent);
+  background: linear-gradient(135deg, rgba(0,150,136,0.12), rgba(0,188,212,0.12));
+  color: var(--accent-dark);
+  box-shadow: 0 4px 20px var(--accent-glow);
+}
+
+.nav-row { display: flex; justify-content: flex-end; gap: 12px; align-items: center; }
+
+/* ==================== RESULT ==================== */
+.result-top {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 2.5rem 2rem 2rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  overflow: hidden;
+}
+.result-top-bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(0,150,136,0.04) 0%, rgba(0,188,212,0.06) 100%);
+  pointer-events: none;
+}
+.result-type-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 14px; border-radius: 99px;
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  border: 1px solid; margin-bottom: 1.5rem;
+  font-family: 'Syne', sans-serif;
+}
+.result-icon-wrap { font-size: 4rem; margin-bottom: 0.75rem; line-height: 1; }
+.result-name {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(1.8rem, 5vw, 2.8rem);
+  font-weight: 800; color: var(--text);
+  line-height: 1.05; margin-bottom: 0.4rem;
+}
+.result-code { font-size: 12px; color: var(--muted); letter-spacing: 0.12em; margin-bottom: 1.5rem; font-family: 'DM Sans', monospace; }
+.result-desc { font-size: 15px; line-height: 1.8; color: var(--muted); font-weight: 300; }
+
+/* TRAITS */
+.traits-wrap { display: flex; gap: 8px; flex-wrap: wrap; margin: 1.25rem 0 0; }
+.trait-pill {
+  font-size: 12px; font-weight: 500;
+  padding: 6px 14px; border-radius: 99px; border: 1px solid;
+}
+
+/* CHARTS SECTION */
+.charts-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 1.75rem 2rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow);
+}
+.section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 13px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 1.5rem;
+}
+.dim-bars { display: flex; flex-direction: column; gap: 14px; }
+.dim-row { display: flex; flex-direction: column; gap: 6px; }
+.dim-labels { display: flex; justify-content: space-between; align-items: center; }
+.dim-name { font-size: 13px; font-weight: 500; color: var(--text); }
+.dim-val { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: var(--accent); }
+.dim-track { height: 8px; background: var(--surface2); border-radius: 99px; overflow: hidden; }
+.dim-fill {
+  height: 100%; border-radius: 99px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  width: 0%;
+  transition: width 1s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* RADAR */
+.radar-wrap {
+  display: flex; justify-content: center;
+  margin-bottom: 1.5rem;
+}
+.radar-wrap svg { width: 100%; max-width: 280px; height: auto; }
+
+/* FAMOUS SECTION */
+.famous-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 1.75rem 2rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow);
+}
+.famous-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.famous-card {
+  background: var(--surface2);
+  border-radius: 14px;
+  padding: 1rem 0.75rem;
+  text-align: center;
+  border: 1px solid var(--border);
+  transition: all 0.2s;
+}
+.famous-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+.famous-emoji { font-size: 2rem; margin-bottom: 0.5rem; display: block; }
+.famous-name { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 0.25rem; }
+.famous-role { font-size: 11px; color: var(--muted); line-height: 1.4; }
+
+/* ACTIONS */
+.result-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- INTRO -->
+  <div class="screen active" id="screen-intro">
+    <div class="brand-header">
+      <img src="Venio.png" alt="Venio ERP logo" class="brand-logo">
+      <div class="brand-text">
+        <span class="brand-name">Venio Indicium</span>
+        <span class="brand-event">Dump Days 2026</span>
+      </div>
+    </div>
+    <div class="intro-eyebrow">🧬 Developer personality test</div>
+    <h1 class="intro-title">Koji si tip<br><span>developera?</span></h1>
+    <p class="intro-desc">12 pitanja. Bez ispravnih odgovora. Samo čista, bolna istina o tebi i tvom kodu.</p>
+    <div class="chips">
+      <span class="chip">⏱ 2 minute</span>
+      <span class="chip">📋 12 pitanja</span>
+      <span class="chip">🧬 8 tipova</span>
+    </div>
+    <button class="btn btn-accent" onclick="startQuiz()">Kreni <span class="arrow">→</span></button>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="screen" id="screen-quiz">
+    <div class="brand-header">
+      <img src="Venio.png" alt="Venio ERP logo" class="brand-logo">
+      <div class="brand-text">
+        <span class="brand-name">Venio Indicium</span>
+        <span class="brand-event">Developer Quiz</span>
+      </div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-meta">
+        <span class="progress-label">Napredak</span>
+        <span class="progress-count" id="prog-count">1 / 12</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+    <div class="q-card">
+      <div class="q-num" id="q-num">Pitanje 01</div>
+      <div class="q-text" id="q-text"></div>
+    </div>
+    <div class="scale-section">
+      <div class="scale-labels">
+        <span>Uopće ne</span>
+        <span>Djelomično</span>
+        <span>Totalno ja</span>
+      </div>
+      <div class="scale-btns" id="scale-btns"></div>
+    </div>
+    <div class="nav-row">
+      <button class="btn btn-ghost" id="btn-prev" onclick="prevQ()" style="display:none">← Nazad</button>
+      <button class="btn btn-accent" id="btn-next" onclick="nextQ()" disabled>Dalje <span class="arrow">→</span></button>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div class="screen" id="screen-result">
+    <div class="brand-header">
+      <img src="Venio.png" alt="Venio ERP logo" class="brand-logo">
+      <div class="brand-text">
+        <span class="brand-name">Venio Indicium</span>
+        <span class="brand-event">Tvoj rezultat</span>
+      </div>
+    </div>
+
+    <!-- Main result card -->
+    <div class="result-top">
+      <div class="result-top-bg"></div>
+      <div class="result-type-badge" id="r-badge"></div>
+      <div class="result-icon-wrap" id="r-icon"></div>
+      <div class="result-name" id="r-name"></div>
+      <div class="result-code" id="r-code"></div>
+      <div class="result-desc" id="r-desc"></div>
+      <div class="traits-wrap" id="r-traits"></div>
+    </div>
+
+    <!-- Radar chart -->
+    <div class="charts-section">
+      <div class="section-title">📊 Tvoj developer profil</div>
+      <div class="radar-wrap">
+        <svg id="radar-svg" viewBox="0 0 300 260" xmlns="http://www.w3.org/2000/svg"></svg>
+      </div>
+      <!-- Bar charts -->
+      <div class="dim-bars" id="dim-bars"></div>
+    </div>
+
+    <!-- Famous people -->
+    <div class="famous-section">
+      <div class="section-title">🌟 Slavni developeri kao ti</div>
+      <div class="famous-grid" id="famous-grid"></div>
+    </div>
+
+    <div class="result-actions">
+      <button class="btn btn-accent" onclick="restart()">Pokušaj ponovo <span class="arrow">↺</span></button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const questions = [
+  { text: "Kad vidim bug u produkciji, prva reakcija mi je otvoriti Stack Overflow prije nego pročitam error poruku.", dims: { fire: 1, lazy: 1 } },
+  { text: "Dodam TODO komentar i iskreno planiram to riješiti... jednog dana.", dims: { lazy: 2, chill: 1 } },
+  { text: "Refactoriram kod koji savršeno radi jer mi nije dovoljno elegantan.", dims: { over: 2, perf: 1 } },
+  { text: "Koristim 3+ alata i pattern-a tamo gdje bi jedan bio sasvim dovoljan.", dims: { over: 2 } },
+  { text: "Kad mi nešto ne radi, priznam kolegama da ne znam zašto radi kad napokon radi.", dims: { chill: 2, lazy: 1 } },
+  { text: "Volim biti onaj koji gasi požare u timu — produkcijske krize me zapravo motiviraju.", dims: { fire: 3 } },
+  { text: "Dokumentaciju pišem tek kad me netko direktno pita što taj kod uopće radi.", dims: { lazy: 2 } },
+  { text: "Imam strogo mišljenje o tome kako treba pisati kod i glasno ga izražavam.", dims: { perf: 2, solo: 1 } },
+  { text: "Imam side project koji nisam dotaknuo tjednima, ali mi je uvijek 'na planu'.", dims: { lazy: 1, chill: 2 } },
+  { text: "Kad vidim legacy kod, osjetim odgovornost da ga razumijem i sačuvam umjesto da ga brišem.", dims: { guard: 3 } },
+  { text: "Preferiram raditi sam — code review mi oduzima više energije nego sama implementacija.", dims: { solo: 2, perf: 1 } },
+  { text: "Moj kod mora biti optimalan čak i kad ga koriste samo 2 osobe jednom tjedno.", dims: { perf: 2, over: 1 } },
+];
+
+const dimMeta = {
+  fire:  { label: "Krizni instinkt",      color: "#ef5350" },
+  over:  { label: "Over-engineering",     color: "#7c6cfc" },
+  perf:  { label: "Perfekcionizam",       color: "#009688" },
+  lazy:  { label: "Strateška lijenost",   color: "#f9a825" },
+  guard: { label: "Legacy čuvanje",       color: "#42a5f5" },
+  solo:  { label: "Individualizam",       color: "#ce93d8" },
+  chill: { label: "Opuštenost",           color: "#81c784" },
+};
+
+const types = [
+  {
+    id: "firefighter", name: "The Firefighter", code: "FIRE-9000", icon: "🧯",
+    badge: { text: "Krizni specialist", color: "#c62828", border: "rgba(198,40,40,0.25)", bg: "rgba(239,83,80,0.08)" },
+    desc: "Živiš za produkcijske incidente. Dok drugi spavaju, ti debugiraš. Tvoje jutro počinje s Slackom, a završava tek kad je sve zeleno. Problem je — nekad i sam uzrokuješ požare jer nema vremena za prevenciju.",
+    traits: [
+      { label: "Brz pod pritiskom", color: "#c62828", border: "rgba(198,40,40,0.25)", bg: "rgba(239,83,80,0.08)" },
+      { label: "Živi za krize", color: "#c62828", border: "rgba(198,40,40,0.25)", bg: "rgba(239,83,80,0.08)" },
+      { label: "Malo dokumentacije", color: "#777", border: "rgba(0,0,0,0.1)", bg: "rgba(0,0,0,0.04)" },
+    ],
+    famous: [
+      { emoji: "💥", name: "Linus Torvalds", role: "Linux kernel — sve je hitno kad patch čeka" },
+      { emoji: "🔥", name: "John Carmack", role: "id Software — doom deploy u pola noći" },
+      { emoji: "⚡", name: "Pieter Levels", role: "indie hacker — 12 startupa u 12 mj." },
+    ],
+    scores: { fire: 3 }
+  },
+  {
+    id: "overengineer", name: "The Over-Engineer", code: "ARCH-∞", icon: "🏗️",
+    badge: { text: "Arhitekturalni vizionar", color: "#4527a0", border: "rgba(69,39,160,0.25)", bg: "rgba(124,108,252,0.08)" },
+    desc: "Docker za Hello World? Mikroservisi za osobni blog? Da, to si ti. Svaki problem je za tebe prilika za novi sloj apstrakcije. Rješenja su ti elegantna, skalabilna i — nikad dovršena.",
+    traits: [
+      { label: "Kompleksna rješenja", color: "#4527a0", border: "rgba(69,39,160,0.25)", bg: "rgba(124,108,252,0.08)" },
+      { label: "Voli arhitekturu", color: "#4527a0", border: "rgba(69,39,160,0.25)", bg: "rgba(124,108,252,0.08)" },
+      { label: "Nikad nije gotovo", color: "#777", border: "rgba(0,0,0,0.1)", bg: "rgba(0,0,0,0.04)" },
+    ],
+    famous: [
+      { emoji: "🚀", name: "Jeff Dean", role: "Google — sistem koji procesira milijarde zahtjeva" },
+      { emoji: "🏛️", name: "Martin Fowler", role: "patron svetac refactoringa i pattern-a" },
+      { emoji: "🔬", name: "Rich Hickey", role: "Clojure — filozofija kao arhitektura" },
+    ],
+    scores: { over: 3 }
+  },
+  {
+    id: "perfectionist", name: "The Perfectionist", code: "PERF-100", icon: "✨",
+    badge: { text: "Code quality guardian", color: "#00695c", border: "rgba(0,105,92,0.25)", bg: "rgba(0,150,136,0.08)" },
+    desc: "Tvoj PR review traje duže od same implementacije. Imaš mišljenje o svakoj imenovanoj varijabli. Kolege te ili obožavaju ili se boje tvog reviewa — nema sredine.",
+    traits: [
+      { label: "Visoki standardi", color: "#00695c", border: "rgba(0,105,92,0.25)", bg: "rgba(0,150,136,0.08)" },
+      { label: "Detaljan code review", color: "#00695c", border: "rgba(0,105,92,0.25)", bg: "rgba(0,150,136,0.08)" },
+      { label: "Sporo, ali točno", color: "#777", border: "rgba(0,0,0,0.1)", bg: "rgba(0,0,0,0.04)" },
+    ],
+    famous: [
+      { emoji: "🍎", name: "Steve Jobs", role: "zahtijevao savršenstvo čak i u nevidljivim dijelovima" },
+      { emoji: "🧠", name: "Donald Knuth", role: "The Art of Computer Programming — 50g pisanja" },
+      { emoji: "🎯", name: "John Carmack", role: "nikad nije ship-ao bez da je kod bio savršen" },
+    ],
+    scores: { perf: 3 }
+  },
+  {
+    id: "lazy", name: "The Strategic Lazyman", code: "TODO-later", icon: "😴",
+    badge: { text: "Efficiency expert", color: "#e65100", border: "rgba(230,81,0,0.25)", bg: "rgba(249,168,37,0.08)" },
+    desc: "Ti to zoveš 'work smart, not hard'. Drugi to zovu tech dug. Tvoj kod radi — nekako — i to ti je dovoljno. TODO komentari su tvoja svakodnevnica. Imaš pet side projekata, niti jedan nije završen.",
+    traits: [
+      { label: "Pragmatičan", color: "#e65100", border: "rgba(230,81,0,0.25)", bg: "rgba(249,168,37,0.08)" },
+      { label: "TODO collector", color: "#e65100", border: "rgba(230,81,0,0.25)", bg: "rgba(249,168,37,0.08)" },
+      { label: "Minimalni effort", color: "#777", border: "rgba(0,0,0,0.1)", bg: "rgba(0,0,0,0.04)" },
+    ],
+    famous: [
+      { emoji: "🦥", name: "Bill Gates", role: "zapošljava lijene ljude jer nađu najkraći put" },
+      { emoji: "😎", name: "Larry Wall", role: "Perl — lijenost je vrlina programera" },
+      { emoji: "🤖", name: "George Hotz", role: "comma.ai — zašto komplicirati kad može jednostavno" },
+    ],
+    scores: { lazy: 3 }
+  },
+  {
+    id: "guardian", name: "The Legacy Guardian", code: "LGC-2009", icon: "🏛️",
+    badge: { text: "Čuvar starog reda", color: "#0d47a1", border: "rgba(13,71,161,0.25)", bg: "rgba(66,165,245,0.08)" },
+    desc: "Razumiješ kod koji je pisan prije nego si uopće počeo raditi u firmi. Znaš zašto postoji taj if statement iz 2011. Bez tebe bi sustav pao — i svi to znaju, ali nitko to ne kaže naglas.",
+    traits: [
+      { label: "Živi u legacy kodu", color: "#0d47a1", border: "rgba(13,71,161,0.25)", bg: "rgba(66,165,245,0.08)" },
+      { label: "Nezamjenjiv za tim", color: "#0d47a1", border: "rgba(13,71,161,0.25)", bg: "rgba(66,165,245,0.08)" },
+      { label: "Odupire se refactoru", color: "#777", border: "rgba(0,0,0,0.1)", bg: "rgba(0,0,0,0.04)" },
+    ],
+    famous: [
+      { emoji: "⚙️", name: "Ken Thompson", role: "Unix iz '69 i dalje živi u svakom serveru" },
+      { emoji: "📜", name: "Dennis Ritchie", role: "C — 50 godina starog koda u produkciji" },
+      { emoji: "🖥️", name: "Bjarne Stroustrup", role: "C++ — backwards compat iznad svega" },
+    ],
+    scores: { guard: 3 }
+  },
+  {
+    id: "solo", name: "The Lone Wolf", code: "SOLO-1", icon: "🐺",
+    badge: { text: "Digitalni pustinjak", color: "#6a1b9a", border: "rgba(106,27,154,0.25)", bg: "rgba(206,147,216,0.08)" },
+    desc: "Najproduktivniji si kad nema meetinga, Slacka ni kolega. Tvoj kod je savršeno logičan — tebi. Merge konflikti su tvoji najveći neprijatelji jer zahtijevaju komunikaciju s ljudima.",
+    traits: [
+      { label: "Radi sam", color: "#6a1b9a", border: "rgba(106,27,154,0.25)", bg: "rgba(206,147,216,0.08)" },
+      { label: "Mrzi meetinge", color: "#6a1b9a", border: "rgba(106,27,154,0.25)", bg: "rgba(206,147,216,0.08)" },
+      { label: "Vlastita logika", color: "#777", border: "rgba(0,0,0,0.1)", bg: "rgba(0,0,0,0.04)" },
+    ],
+    famous: [
+      { emoji: "🐺", name: "George Hotz", role: "comma.ai — sam pisao self-driving u weekendu" },
+      { emoji: "💻", name: "Terry Davis", role: "TempleOS — cijeli OS solo u 12 godina" },
+      { emoji: "🌐", name: "Fabrice Bellard", role: "ffmpeg, QEMU, tcc — sve sam" },
+    ],
+    scores: { solo: 3 }
+  },
+  {
+    id: "chill", name: "The Eternal Junior", code: "JR-forever", icon: "🌀",
+    badge: { text: "Vječni učenik", color: "#1b5e20", border: "rgba(27,94,32,0.25)", bg: "rgba(129,199,132,0.08)" },
+    desc: "Pet godina iskustva, još uvijek pitaš za merge. Uvijek ćeš nešto naučiti — jednog dana. Dobra vijest: svi te vole jer nikad nisi prijetnja. Loša vijest: ni promaknuće ne dolazi.",
+    traits: [
+      { label: "Opušten", color: "#1b5e20", border: "rgba(27,94,32,0.25)", bg: "rgba(129,199,132,0.08)" },
+      { label: "Uvijek pita za pomoć", color: "#1b5e20", border: "rgba(27,94,32,0.25)", bg: "rgba(129,199,132,0.08)" },
+      { label: "Nema žurbe", color: "#777", border: "rgba(0,0,0,0.1)", bg: "rgba(0,0,0,0.04)" },
+    ],
+    famous: [
+      { emoji: "🎓", name: "Guido van Rossum", role: "Python — sve treba biti čitljivo i jednostavno" },
+      { emoji: "☕", name: "James Gosling", role: "Java — učio od svakog projekta polako i sigurno" },
+      { emoji: "🌊", name: "Yukihiro Matsumoto", role: "Ruby — 'developer happiness' je jedini cilj" },
+    ],
+    scores: { chill: 3 }
+  },
+  {
+    id: "unicorn", name: "The Unicorn", code: "UNI-0.1%", icon: "🦄",
+    badge: { text: "Mitska pojava", color: "#00695c", border: "rgba(0,105,92,0.25)", bg: "rgba(0,150,136,0.08)" },
+    desc: "Pišeš dokumentaciju. Završavaš projekte. Komuniciraš jasno. Nisi ni perfekcionist ni lijen — samo si... normalan? Kolege te pitaju kako to radiš. Ti i sam ne znaš.",
+    traits: [
+      { label: "Balansiran", color: "#00695c", border: "rgba(0,105,92,0.25)", bg: "rgba(0,150,136,0.08)" },
+      { label: "Rijedak primjerak", color: "#00695c", border: "rgba(0,105,92,0.25)", bg: "rgba(0,150,136,0.08)" },
+      { label: "Svi te vole", color: "#777", border: "rgba(0,0,0,0.1)", bg: "rgba(0,0,0,0.04)" },
+    ],
+    famous: [
+      { emoji: "🦄", name: "Anders Hejlsberg", role: "C#, TypeScript — balansiran dizajn uvijek" },
+      { emoji: "⚖️", name: "Tim Berners-Lee", role: "Web — otvorenost, standardnost, suradnja" },
+      { emoji: "🌟", name: "Grace Hopper", role: "COBOL — jasna, dokumentirana, timska" },
+    ],
+    scores: {}
+  }
+];
+
+let current = 0;
+let answers = new Array(questions.length).fill(null);
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+}
+function startQuiz() {
+  current = 0; answers.fill(null);
+  renderQ(); show('quiz');
+}
+function renderQ() {
+  const q = questions[current], total = questions.length;
+  document.getElementById('q-num').textContent = 'Pitanje ' + String(current+1).padStart(2,'0');
+  document.getElementById('q-text').textContent = q.text;
+  document.getElementById('prog-count').textContent = (current+1) + ' / ' + total;
+  document.getElementById('prog-fill').style.width = (current/total*100) + '%';
+  const sel = answers[current];
+  const nextBtn = document.getElementById('btn-next');
+  nextBtn.disabled = sel === null;
+  nextBtn.innerHTML = current === total-1 ? 'Vidi rezultat <span class="arrow">→</span>' : 'Dalje <span class="arrow">→</span>';
+  document.getElementById('btn-prev').style.display = current > 0 ? 'inline-flex' : 'none';
+  const wrap = document.getElementById('scale-btns');
+  wrap.innerHTML = '';
+  for (let i = 1; i <= 5; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'scale-btn' + (sel === i ? ' selected' : '');
+    const num = document.createElement('span'); num.textContent = i;
+    const dotRow = document.createElement('div'); dotRow.className = 'dot-row';
+    for (let d = 1; d <= 5; d++) {
+      const dot = document.createElement('div');
+      dot.className = 'dot' + (d <= i ? ' on' : '');
+      dotRow.appendChild(dot);
+    }
+    btn.appendChild(num); btn.appendChild(dotRow);
+    btn.onclick = () => pick(i);
+    wrap.appendChild(btn);
+  }
+}
+function pick(val) {
+  answers[current] = val;
+  document.getElementById('btn-next').disabled = false;
+  document.querySelectorAll('.scale-btn').forEach((b,i) => b.classList.toggle('selected', i+1===val));
+}
+function prevQ() { if (current > 0) { current--; renderQ(); } }
+function nextQ() {
+  if (answers[current] === null) return;
+  if (current < questions.length-1) { current++; renderQ(); }
+  else showResult();
+}
+
+function computeScores() {
+  const scores = { fire:0, over:0, perf:0, lazy:0, guard:0, solo:0, chill:0 };
+  questions.forEach((q,i) => {
+    const val = answers[i] ?? 3;
+    const w = (val-1)/4;
+    if (q.dims) Object.entries(q.dims).forEach(([d,m]) => { scores[d] = (scores[d]||0) + w*m; });
+  });
+  // normalise 0-100
+  const maxPossible = { fire:6, over:6, perf:9, lazy:7, guard:3, solo:6, chill:6 };
+  const norm = {};
+  Object.keys(scores).forEach(k => { norm[k] = Math.min(100, Math.round((scores[k]/(maxPossible[k]||1))*100)); });
+  return { raw: scores, norm };
+}
+
+function drawRadar(normScores) {
+  const keys = Object.keys(dimMeta);
+  const n = keys.length;
+  const cx = 150, cy = 130, r = 90;
+  const svg = document.getElementById('radar-svg');
+  svg.innerHTML = '';
+
+  const ns = 'http://www.w3.org/2000/svg';
+  const angles = keys.map((_,i) => (Math.PI*2/n)*i - Math.PI/2);
+
+  // grid rings
+  [0.25,0.5,0.75,1].forEach(f => {
+    const pts = angles.map(a => `${cx+Math.cos(a)*r*f},${cy+Math.sin(a)*r*f}`).join(' ');
+    const poly = document.createElementNS(ns,'polygon');
+    poly.setAttribute('points', pts);
+    poly.setAttribute('fill','none');
+    poly.setAttribute('stroke','rgba(0,150,136,0.12)');
+    poly.setAttribute('stroke-width','1');
+    svg.appendChild(poly);
+  });
+
+  // spokes
+  angles.forEach(a => {
+    const line = document.createElementNS(ns,'line');
+    line.setAttribute('x1',cx); line.setAttribute('y1',cy);
+    line.setAttribute('x2',cx+Math.cos(a)*r); line.setAttribute('y2',cy+Math.sin(a)*r);
+    line.setAttribute('stroke','rgba(0,150,136,0.12)'); line.setAttribute('stroke-width','1');
+    svg.appendChild(line);
+  });
+
+  // data polygon
+  const vals = keys.map(k => normScores[k]/100);
+  const dataPts = angles.map((a,i) => `${cx+Math.cos(a)*r*vals[i]},${cy+Math.sin(a)*r*vals[i]}`).join(' ');
+  const fill = document.createElementNS(ns,'polygon');
+  fill.setAttribute('points', dataPts);
+  fill.setAttribute('fill','rgba(0,150,136,0.15)');
+  fill.setAttribute('stroke','#009688'); fill.setAttribute('stroke-width','2');
+  svg.appendChild(fill);
+
+  // dots
+  angles.forEach((a,i) => {
+    const x = cx+Math.cos(a)*r*vals[i], y = cy+Math.sin(a)*r*vals[i];
+    const dot = document.createElementNS(ns,'circle');
+    dot.setAttribute('cx',x); dot.setAttribute('cy',y);
+    dot.setAttribute('r','4'); dot.setAttribute('fill','#009688');
+    svg.appendChild(dot);
+  });
+
+  // labels
+  keys.forEach((k,i) => {
+    const a = angles[i];
+    const lx = cx + Math.cos(a)*(r+22);
+    const ly = cy + Math.sin(a)*(r+22);
+    const txt = document.createElementNS(ns,'text');
+    txt.setAttribute('x', lx); txt.setAttribute('y', ly);
+    txt.setAttribute('text-anchor','middle'); txt.setAttribute('dominant-baseline','middle');
+    txt.setAttribute('font-size','9.5'); txt.setAttribute('font-family','DM Sans, sans-serif');
+    txt.setAttribute('font-weight','500'); txt.setAttribute('fill','rgba(15,25,35,0.55)');
+    txt.textContent = dimMeta[k].label;
+    svg.appendChild(txt);
+  });
+}
+
+function showResult() {
+  const { raw, norm } = computeScores();
+
+  let best = null, bestScore = -1;
+  types.filter(t => t.id !== 'unicorn').forEach(t => {
+    let s = 0;
+    Object.entries(t.scores).forEach(([d,w]) => { s += (raw[d]||0)*w; });
+    if (s > bestScore) { bestScore = s; best = t; }
+  });
+  if (bestScore < 1.5) best = types.find(t => t.id === 'unicorn');
+
+  document.getElementById('prog-fill').style.width = '100%';
+  document.getElementById('r-icon').textContent = best.icon;
+  document.getElementById('r-name').textContent = best.name;
+  document.getElementById('r-code').textContent = best.code;
+  document.getElementById('r-desc').textContent = best.desc;
+
+  const badge = document.getElementById('r-badge');
+  badge.textContent = best.badge.text;
+  badge.style.color = best.badge.color;
+  badge.style.borderColor = best.badge.border;
+  badge.style.background = best.badge.bg;
+
+  const traitsWrap = document.getElementById('r-traits');
+  traitsWrap.innerHTML = '';
+  best.traits.forEach(tr => {
+    const pill = document.createElement('span');
+    pill.className = 'trait-pill';
+    pill.textContent = tr.label;
+    pill.style.color = tr.color; pill.style.borderColor = tr.border; pill.style.background = tr.bg;
+    traitsWrap.appendChild(pill);
+  });
+
+  // Draw radar
+  drawRadar(norm);
+
+  // Bar charts
+  const bars = document.getElementById('dim-bars');
+  bars.innerHTML = '';
+  Object.entries(dimMeta).forEach(([k, meta]) => {
+    const v = norm[k];
+    const row = document.createElement('div'); row.className = 'dim-row';
+    row.innerHTML = `
+      <div class="dim-labels">
+        <span class="dim-name">${meta.label}</span>
+        <span class="dim-val">${v}%</span>
+      </div>
+      <div class="dim-track">
+        <div class="dim-fill" id="bar-${k}" style="background: linear-gradient(90deg, ${meta.color}, ${meta.color}99)"></div>
+      </div>`;
+    bars.appendChild(row);
+  });
+
+  // Famous people
+  const fg = document.getElementById('famous-grid');
+  fg.innerHTML = '';
+  best.famous.forEach(f => {
+    const card = document.createElement('div'); card.className = 'famous-card';
+    card.innerHTML = `<span class="famous-emoji">${f.emoji}</span><div class="famous-name">${f.name}</div><div class="famous-role">${f.role}</div>`;
+    fg.appendChild(card);
+  });
+
+  show('result');
+
+  // Animate bars after render
+  setTimeout(() => {
+    Object.keys(dimMeta).forEach(k => {
+      const el = document.getElementById('bar-'+k);
+      if (el) el.style.width = norm[k] + '%';
+    });
+  }, 100);
+}
+
+function restart() {
+  current = 0; answers.fill(null); show('intro');
+}
+</script>
+</body>
+</html>
